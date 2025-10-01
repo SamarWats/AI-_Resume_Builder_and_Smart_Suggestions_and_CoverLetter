@@ -26,15 +26,16 @@ export const createResume = async (req, res) => {
       education,
       projects,
       achievements,
-      socialEngagement
+      socialEngagement,
+      template
     } = req.body;
 
     // Validate required fields
-if (!name || !summary || !skills || skills.length === 0) {
-  return res.status(400).json({
-    message: "Name, summary, and at least one skill are required"
-  });
-}
+    if (!name || !summary || !skills || skills.length === 0) {
+      return res.status(400).json({
+        message: "Name, summary, and at least one skill are required"
+      });
+    }
 
     const userId = req.user.id; // Take userId from JWT
 
@@ -62,9 +63,22 @@ if (!name || !summary || !skills || skills.length === 0) {
       socialEngagement: socialEngagement || []
     };
 
-    const resumeHTML = generateResumeHTML({ details });
+    let generateResumeHTML;
+    if (template === "template2") {
+      generateResumeHTML = (await import("../utils/resumeTemplate2.js")).default;
+    } else {
+      generateResumeHTML = (await import("../utils/resumeTemplate.js")).default;
+    }
 
-    const newResume = new Resume({ userId, details, suggestions, resumeHTML });
+    const resumeHTML = generateResumeHTML({ details, template });
+
+    const newResume = new Resume({
+      userId,
+      details,
+      suggestions,
+      resumeHTML,
+      template,
+    });
 
     await newResume.save();
 
@@ -209,8 +223,19 @@ export const exportResumePDF = async (req, res) => {
       return res.status(404).json({ message: "Resume not found" });
     }
 
-    // Generate HTML and PDF buffer
-    const htmlContent = generateResumeHTML(resume);
+    // ✅ Dynamically import template based on stored resume
+    const templateName = resume.template || "template1";
+    let generateResumeHTML;
+    if (templateName === "template2") {
+      generateResumeHTML = (await import("../utils/resumeTemplate2.js")).default;
+    } else {
+      generateResumeHTML = (await import("../utils/resumeTemplate.js")).default;
+    }
+
+    const htmlContent = generateResumeHTML({
+      details: resume.details,
+      template: templateName,
+    });
     const pdfBuffer = await generatePDFBuffer(htmlContent);
 
     // Ensure uploads folder exists
@@ -226,14 +251,12 @@ export const exportResumePDF = async (req, res) => {
     resume.fileName = fileName;
     await resume.save();
 
-    // ✅ Just return JSON with file info (frontend can fetch/download later)
     res.json({
       success: true,
       message: "Resume exported successfully",
       fileName: fileName,
       fileUrl: `/uploads/${fileName}`, // served statically
     });
-
   } catch (error) {
     console.error("❌ Error exporting resume to PDF:", error);
     res.status(500).json({

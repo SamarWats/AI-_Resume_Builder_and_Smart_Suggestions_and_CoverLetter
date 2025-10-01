@@ -82,8 +82,6 @@ const MultiStepForm = () => {
 
   console.log("Current formData:", formData);
 
-
-
   // ✅ Frontend pre-validation
   const validatePayload = (payload) => {
     if (!payload.name.trim()) return false;
@@ -97,6 +95,15 @@ const MultiStepForm = () => {
     try {
       // ✅ Use the transform function
       const payload = transformFormData(formData);
+
+      const selectedTemplate = JSON.parse(
+        localStorage.getItem("selectedTemplate")
+      );
+      if (!selectedTemplate) {
+        return alert("Please select a template first.");
+      }
+
+      payload.template = selectedTemplate; // ✅ add this
 
       // ✅ Frontend validation
       if (!validatePayload(payload)) {

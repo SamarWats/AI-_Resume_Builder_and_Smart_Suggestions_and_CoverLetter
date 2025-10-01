@@ -35,7 +35,8 @@ router.post(
     body('education').optional().isArray(),
     body('projects').optional().isArray(),
     body('achievements').optional().isArray(),
-    body('socialEngagement').optional().isArray()
+    body('socialEngagement').optional().isArray(),
+    body('template').notEmpty().withMessage('Template is required'),
   ],
   createResume
 );

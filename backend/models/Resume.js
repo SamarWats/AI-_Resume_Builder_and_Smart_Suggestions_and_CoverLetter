@@ -49,6 +49,7 @@ const DetailsSchema = new mongoose.Schema({
 const ResumeSchema = new mongoose.Schema(
   {
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    template:{type:Object, required:true}, // ✅ NEW field for template details
     details: DetailsSchema,
     coverLetter: { type: String, default: "" },
     suggestions: [

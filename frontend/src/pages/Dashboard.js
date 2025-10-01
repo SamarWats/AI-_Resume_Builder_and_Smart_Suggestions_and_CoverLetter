@@ -217,7 +217,7 @@ const handleDownload = async (id) => {
             </h1>
 
             <button
-              onClick={() => navigate("/create-resume")} // ✅ navigate to MultiStepForm
+              onClick={() => navigate("/templates")} // ✅ navigate to templates
               className="bg-blue-600 text-white text-sm font-medium rounded-md px-4 py-2 whitespace-nowrap hover:bg-blue-700 transition"
             >
               + Create New

@@ -16,9 +16,30 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.use("/templates", express.static(path.join(process.cwd(), "templates"))); 
+
 // ✅ API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/resume', resumeRoutes);
+app.get("/api/templates", (req, res) => {
+  // ✅ You can replace this static array with DB query later
+  const templates = [
+    {
+      id: 1,
+      name: "Modern Blue",
+      preview: "/templates/modern-blue.png",
+      data: { color: "blue", sections: ["Header", "Experience", "Education"] }
+    },
+    {
+      id: 2,
+      name: "Minimal Gray",
+      preview: "/templates/minimal-gray.png",
+      data: { color: "gray", sections: ["Header", "Skills", "Projects"] }
+    },
+  ];
+  res.json(templates);
+});
+
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 // ✅ Health Check Route

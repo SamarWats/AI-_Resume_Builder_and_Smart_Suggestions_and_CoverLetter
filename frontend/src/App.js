@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import Templates from "./pages/Templates";
 import MultiStepForm from "./components/MultiStepForm/MultiStepForm";   // ⬅️ NEW
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/create-resume" element={<MultiStepForm />} />
+        <Route path="/templates" element={<Templates />} />
       </Routes>
     </Router>
   );
